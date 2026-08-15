@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$TURN29 — Protocol Launch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0d14;
+    --bg-panel: #10141f;
+    --bg-panel-2: #151b29;
+    --line: #232b3d;
+    --gold: #f0b90b;
+    --green: #16c784;
+    --red: #ea3943;
+    --text: #e9ecf3;
+    --text-dim: #7c8598;
+    --text-dimmer: #4b5468;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(240,185,11,0.07), transparent 40%),
+      radial-gradient(circle at 85% 20%, rgba(22,199,132,0.06), transparent 40%);
+    color: var(--text);
+    font-family: var(--font-display);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* ---- Ticker ---- */
+  .ticker-wrap{
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 9px 0;
+  }
+  .ticker{
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    animation: scroll 32s linear infinite;
+  }
+  .ticker span{ margin-right: 40px; color: var(--text-dim); }
+  .ticker .up{ color: var(--green); }
+  .ticker .down{ color: var(--red); }
+  @keyframes scroll{
+    0%{ transform: translateX(0); }
+    100%{ transform: translateX(-50%); }
+  }
+
+  .wrap{ max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- Hero ---- */
+  .hero{ padding: 64px 0 40px; text-align:center; }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .eyebrow::before{ content: "● "; color: var(--green); }
+  .symbol{
+    font-size: clamp(48px, 11vw, 84px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    background: linear-gradient(180deg, #ffffff 0%, #b9c2d6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .symbol .cash{ color: var(--gold); -webkit-text-fill-color: var(--gold); }
+  .tagline{
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 14px;
+  }
+  .price-row{
+    display:flex; align-items:baseline; justify-content:center; gap: 14px;
+    margin-top: 22px; flex-wrap: wrap;
+  }
+  .price{ font-family: var(--font-mono); font-size: 20px; color: var(--text); }
+  .change{ font-family: var(--font-mono); font-size: 15px; color: var(--green); background: rgba(22,199,132,0.12); padding: 3px 10px; border-radius: 4px; }
+
+  /* ---- Countdown ---- */
+  .countdown{
+    display:flex; justify-content:center; gap: 10px; margin-top: 34px; flex-wrap: wrap;
+  }
+  .cd-cell{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 16px;
+    min-width: 68px;
+    text-align: center;
+  }
+  .cd-num{ font-family: var(--font-mono); font-size: 24px; font-weight: 600; color: var(--gold); }
+  .cd-label{ font-family: var(--font-mono); font-size: 9.5px; color: var(--text-dimmer); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+
+  /* ---- Stats grid ---- */
+  .stats{
+    display:grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 40px;
+  }
+  .stat{ background: var(--bg-panel); padding: 16px 10px; text-align:center; }
+  .stat-label{ font-family: var(--font-mono); font-size: 9.5px; color: var(--text-dimmer); letter-spacing: 0.08em; text-transform:uppercase; }
+  .stat-value{ font-family: var(--font-mono); font-size: 17px; color: var(--text); margin-top: 6px; font-weight: 600;}
+
+  /* ---- Connect button ---- */
+  .connect-area{ text-align:center; margin-top: 48px; }
+  .connect-btn{
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: #0a0d14;
+    background: var(--gold);
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 0 0 rgba(240,185,11,0);
+  }
+  .connect-btn:hover{ transform: translateY(-2px); box-shadow: 0 8px 24px rgba(240,185,11,0.25); }
+  .connect-hint{ font-family: var(--font-mono); font-size: 11px; color: var(--text-dimmer); margin-top: 12px; }
+
+  .decrypt-area{ margin-top: 30px; }
+  .decrypt-label{ font-family: var(--font-mono); font-size: 11px; color: var(--text-dimmer); margin-bottom: 10px; }
+  .decrypt-row{ display:flex; justify-content:center; gap: 8px; flex-wrap: wrap; }
+  .decrypt-input{
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    width: 160px;
+    text-align: center;
+    letter-spacing: 0.05em;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .decrypt-input:focus{ border-color: var(--gold); }
+  .decrypt-input.shake{ animation: shake 0.4s ease; border-color: var(--red); }
+  @keyframes shake{
+    0%, 100%{ transform: translateX(0); }
+    20%{ transform: translateX(-6px); }
+    40%{ transform: translateX(6px); }
+    60%{ transform: translateX(-4px); }
+    80%{ transform: translateX(4px); }
+  }
+  .decrypt-input.success{ animation: inputPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; border-color: var(--green); }
+  @keyframes inputPop {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0, 102, 255, 0.2);
+    }
+    100% {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.15);
+    }
+  }
+  .decrypt-btn{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    background: var(--bg-panel-2);
+    border: 1px solid var(--line);
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .decrypt-btn:hover{ border-color: var(--gold); color: var(--gold); }
+  .decrypt-msg{ font-family: var(--font-mono); font-size: 11px; margin-top: 12px; min-height: 14px; }
+  .decrypt-msg.error{ color: var(--red); }
+  .decrypt-msg.success{ color: var(--green); }
+
+  .block-title.decoded{ color: var(--green); }
+  .block.decoded{ border-color: rgba(22,199,132,0.4); }
+
+  /* ---- Roadmap (hidden until unlocked) ---- */
+  #roadmap{
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.9s ease, opacity 0.9s ease;
+  }
+  #roadmap.open{ max-height: 4000px; opacity: 1; }
+
+  .phase{ margin-top: 56px; }
+  .phase-head{
+    display:flex; align-items:baseline; gap: 12px; margin-bottom: 18px;
+    border-bottom: 1px solid var(--line); padding-bottom: 14px;
+  }
+  .phase-tag{
+    font-family: var(--font-mono); font-size: 11px; color: #0a0d14;
+    background: var(--gold); padding: 3px 8px; border-radius: 4px; font-weight:600;
+  }
+  .phase-title{ font-size: 20px; font-weight: 600; }
+  .phase-date{ font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); margin-left:auto; }
+
+  .block{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: border-color 0.2s ease;
+  }
+  .block:hover{ border-color: var(--gold); }
+  .block-time{
+    font-family: var(--font-mono); font-size: 13px; color: var(--gold);
+    min-width: 52px; padding-top: 2px;
+  }
+  .block-body{ flex: 1; }
+  .block-title{ font-size: 15px; font-weight: 600; color: var(--text); }
+  .block-note{ font-family: var(--font-mono); font-size: 11.5px; color: var(--text-dim); margin-top: 4px; }
+  .block-hash{
+    font-family: var(--font-mono); font-size: 9.5px; color: var(--text-dimmer);
+    margin-top: 6px; letter-spacing: 0.02em;
+  }
+  .confirmed{
+    font-family: var(--font-mono); font-size: 9.5px; color: var(--green);
+    white-space: nowrap; padding-top: 2px;
+  }
+  .confirmed::before{ content:"🔒 "; }
+  .confirmed.unlocked::before{ content:"🔓 "; }
+  .lock{ font-size: 12px; opacity: 0.6; margin-left: 2px; }
+  .block-title{ font-family: var(--font-mono); }
+
+  .tbd{ opacity: 0.55; }
+  .tbd .block-note{ color: var(--text-dimmer); }
+
+  /* ---- Footer ---- */
+  .footer{
+    margin-top: 64px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dimmer);
+    line-height: 1.8;
+    border-top: 1px solid var(--line);
+    padding-top: 28px;
+  }
+  .footer .sig{ color: var(--gold); margin-top: 8px; display:block; }
+
+  @media (max-width: 480px){
+    .stats{ grid-template-columns: repeat(2, 1fr); }
+    .block{ flex-direction: column; gap: 4px; }
+    .confirmed{ padding-top: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="ticker-wrap">
+    <div class="ticker" id="tickerTrack"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow">mainnet launch · limited supply</div>
+      <div class="symbol">$CSDY<span class="cash">29</span></div>
+      <div class="tagline">// a non-fungible weekend, minted once, never re-issued<br>// full transaction data is encrypted. hints only. decode at your own risk.</div>
+
+      <div class="price-row">
+        <span class="price">HUSBAND = 29 YRS</span>
+        <span class="change">▲ ALL-TIME HIGH</span>
+      </div>
+
+      <div class="countdown" id="countdown">
+        <div class="cd-cell"><div class="cd-num" id="cd-d">--</div><div class="cd-label">days</div></div>
+        <div class="cd-cell"><div class="cd-num" id="cd-h">--</div><div class="cd-label">hrs</div></div>
+        <div class="cd-cell"><div class="cd-num" id="cd-m">--</div><div class="cd-label">min</div></div>
+        <div class="cd-cell"><div class="cd-num" id="cd-s">--</div><div class="cd-label">sec</div></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Circ. Supply</div><div class="stat-value">1</div></div>
+        <div class="stat"><div class="stat-label">Chain</div><div class="stat-value">Layer 29</div></div>
+        <div class="stat"><div class="stat-label">Consensus</div><div class="stat-value">Proof of Work</div></div>
+        <div class="stat"><div class="stat-label">Gas Fees</div><div class="stat-value">$5.00</div></div>
+      </div>
+
+      <div class="connect-area">
+        <button class="connect-btn" id="connectBtn" onclick="unlock()">🔓 CONNECT WALLET TO VIEW ROADMAP</button>
+        <div class="connect-hint">no seed phrase required. just show up at the right block, at the right time.</div>
+      </div>
+
+      <div class="decrypt-area" id="decryptArea">
+        <div class="decrypt-label">// decryption key required to read block contents</div>
+        <div class="decrypt-row">
+          <input type="text" id="decryptInput" class="decrypt-input" placeholder="CODE" autocomplete="off">
+          <button class="decrypt-btn" id="decryptBtn" onclick="tryDecrypt()">DECRYPT</button>
+        </div>
+        <div class="decrypt-msg" id="decryptMsg"></div>
+      </div>
+    </div>
+
+    <div id="roadmap">
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-tag">PHASE 1</span>
+          <span class="phase-title">Genesis Block</span>
+          <span class="phase-date">Sat, 29 Aug</span>
+        </div>
+
+        <div class="block">
+          <div class="block-time">10:00</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b01" data-iv="8HjOCPs/7t23Awt4" data-ct="W8nNu1/2ZmNe8t3CLHJfmua2ZJ+/Aal3I9ugiTm4E/g="><span class="hash-text">0x5348f9…b635</span></div>
+            <div class="block-note">// hint: zero-knowledge immersion. Thermal state, cold storage, total network blackout.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">12:00</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b02" data-iv="SQRr3/Biywzfsnfd" data-ct="m4+NLzX+idqwalk6NBqCBvx7QTNU3BorjQAgSnmRD/wP0T4="><span class="hash-text">0xd81959…3fcd</span></div>
+            <div class="block-note">// hint: a small flame ball.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">14:00</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b03" data-iv="tohECV423Ugp8SGa" data-ct="xKIk/67xlaTvBZ2gV8opgWeTfr92fHEEniCOxf8q4/BhlVHZYWtGH5BpRFtA11burfOiJ6jxu+xugTX+vTsUrE0VC68="><span class="hash-text">0x497e22…4b0e</span></div>
+            <div class="block-note">// hint: liquid yield farming, or fresh carb mints.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">15:00</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b04" data-iv="5abLefNPze2SuBxV" data-ct="vRzR5nzNv1vS/Ea7/ac8hbHe0TgGScBAo3ICyAIcKk/ikMM="><span class="hash-text">0x30a807…646c</span></div>
+            <div class="block-note">// hint: relocating. bring your legs.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">15:45</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b05" data-iv="LmipY1N79VvC+e2w" data-ct="2CsfQvg2us7nhVraUuMWhXZDUp5pLfbo5D3O9/5xA8DkEXZSdrSdksNe2RM="><span class="hash-text">0xac4d06…9adc</span></div>
+            <div class="block-note">// hint: reality, assembled one small square at a time.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">17:45</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b06" data-iv="tiCmoW8RKne221BF" data-ct="UpR0/H76zOS2gW44BeoJKzTJgIdPMXd2v6rlktCmcRk="><span class="hash-text">0x626c19…354f</span></div>
+            <div class="block-note">// hint: relocating again. same rules apply.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">18:15</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b07" data-iv="CCWKEa7PmXDnyRfD" data-ct="Y2a8Ir2nEnwTmOnLP+PeXc9mvi0D5JMErGIuN3XvyNhSOEpJeMfU1fOtdDKIfX52"><span class="hash-text">0x7d60d5…8e31</span></div>
+            <div class="block-note">// hint: everything's upside down. reality checks fail. </div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block tbd">
+          <div class="block-time">20:15</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b08" data-iv="kdxIGUdp2tXJZYfO" data-ct="2KqZSev2UB6JNP+1b0utVSQH21FMNS8OkKDyOEWnJEP+IPBuyJy52OG9Eje/rg=="><span class="hash-text">0xf80b49…2824</span></div>
+            <div class="block-note">// no transaction data. this block is still unmined.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <span class="phase-tag">PHASE 2</span>
+          <span class="phase-title">Halving Day</span>
+          <span class="phase-date">Sun, 30 Aug</span>
+        </div>
+
+        <div class="block">
+          <div class="block-time">09:00</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b09" data-iv="sVyNUGWRbH1v2D8n" data-ct="0gfFG12CPZbdGwiLG1UgTNG7RgwYsJenY0jF5okNbSe7"><span class="hash-text">0x71b9c8…5d46</span></div>
+            <div class="block-note">// hint: proof-of-work sp protocol. high gas fees, slow block-times, pending rise.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">13:00</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b10" data-iv="RNufFFbTz6Vj6aFQ" data-ct="KjaxKXaX7k3UuGXoMGSC1ckjZHp1jeGVhg=="><span class="hash-text">0x1348ec…af1c</span></div>
+            <div class="block-note">// hint: syncing back to base layer.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">13:30</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b11" data-iv="NVWOqiAsBlCWRJUu" data-ct="SQUYrJHMrim+u941shyZ4W97BfQ="><span class="hash-text">0xff47f9…707f</span></div>
+            <div class="block-note">// hint: a staking period. do not withdraw early.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">14:00</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b12" data-iv="3U5m7cl0uUep8otZ" data-ct="pGOPg7vvo5V14VqYfYM2ZHpleO3Dp+BX+X6g9N/UXAnEWN6nzZa9BoT9/KqKF0VV5bWQ"><span class="hash-text">0x3257b2…e585</span></div>
+            <div class="block-note">// hint: one node has no eyes. one has no hands. smart-contract verbal calls only. trustless collaboration required.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">17:00</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b13" data-iv="+psC8sBZXaSwi0m3" data-ct="SLRhAD+s4JdmmICmPtJ/3JdyCapSQHhVWHSF8MWNAgJ/qe5IcKiQN0OixB0hUAMFIWU/iB4="><span class="hash-text">0xbd8a7c…d448</span></div>
+            <div class="block-note">// hint: sweat now. failover protocol: emergency off-chain extraction if the smart contract fails.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">18:30</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b14" data-iv="8m2DUFjPxhutxXhi" data-ct="iamuUuViBEgPf+utCt6Rs42xm5SezG1wTbSa02FOvQ=="><span class="hash-text">0xbe44b5…973b</span></div>
+            <div class="block-note">// hint: eight legs, heavy gas, minimal mercy for your tissue.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+
+        <div class="block">
+          <div class="block-time">20:30</div>
+          <div class="block-body">
+            <div class="block-title" data-label="b15" data-iv="eRdLdasoPoRMIizW" data-ct="m70v48sCAJ1Bilco9S/pLAOEzHcka0Tg1P86EQ=="><span class="hash-text">0xea8842…9b96</span></div>
+            <div class="block-note">// hint: the final block confirms. irreversible. no undo.</div>
+          </div>
+          <div class="confirmed">encrypted</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        this offer is not financial advice.<br>
+        decryption keys are not for sale, not even to you.<br>
+        side effects may include cake, crab, and happiness.<br>
+        no refunds, no rug pulls, no expiry — only timestamps.
+        <span class="sig">— signed, the sole shareholder of your butt. happy 29th. 🎂</span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Ticker content
+  const tickerItems = [
+    ['$CSDY29', 'up', '+29.00%'],
+    ['$CAKE', 'up', '+100%'],
+    ['$CRAB', 'up', '+8.00'],
+    ['$HODL', 'up', 'THE BAG'],
+    ['$RUN29', 'down', '-1 EXCUSE'],
+    ['$WIFE', 'up', 'ATH FOREVER'],
+    ['$BDAY', 'up', 'MINTING SOON'],
+  ];
+  const track = document.getElementById('tickerTrack');
+  function buildTicker(){
+    let html = '';
+    for(let r=0;r<2;r++){
+      tickerItems.forEach(([sym,dir,val])=>{
+        html += `<span>${sym} <span class="${dir}">${dir==='up'?'▲':'▼'} ${val}</span></span>`;
+      });
+    }
+    track.innerHTML = html;
+  }
+  buildTicker();
+
+  // Countdown to Aug 29
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function updateCountdown(){
+    const now = new Date();
+    let target = new Date(now.getFullYear(), 7, 29, 10, 0, 0); // Aug is month index 7
+    if(target < now){ target = new Date(now.getFullYear()+1, 7, 29, 10, 0, 0); }
+    const diff = target - now;
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    document.getElementById('cd-d').textContent = pad(d);
+    document.getElementById('cd-h').textContent = pad(h);
+    document.getElementById('cd-m').textContent = pad(m);
+    document.getElementById('cd-s').textContent = pad(s);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // Preview hashes are precomputed offline and hardcoded into the markup above.
+  // The decrypt function below never stores or references the real key —
+  // it simply attempts decryption with whatever the visitor types, and
+  // AES-GCM's built-in authentication check rejects anything that's wrong.
+
+  // Unlock roadmap
+  function b64ToBytes(b64){
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  async function tryDecrypt(){
+    const input = document.getElementById('decryptInput');
+    const msg = document.getElementById('decryptMsg');
+    const raw = input.value.trim();
+    // .replace(/[^0-9]/g, ''); // strip slashes/dashes/spaces
+
+    // Derive the AES key the same way it was derived when encrypting
+    const keyDigest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+    const cryptoKey = await crypto.subtle.importKey('raw', keyDigest, 'AES-GCM', false, ['decrypt']);
+
+    const nodes = document.querySelectorAll('[data-ct]');
+    let successCount = 0;
+    const results = [];
+
+    for (const node of nodes){
+      try{
+        const iv = b64ToBytes(node.dataset.iv);
+        const ct = b64ToBytes(node.dataset.ct);
+        const plainBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, cryptoKey, ct);
+        const plainText = new TextDecoder().decode(plainBuf);
+        results.push({ node, plainText });
+        successCount++;
+      } catch(e){
+        // wrong key -> GCM auth tag fails -> decrypt() throws. that's expected on a bad guess.
+      }
+    }
+
+    if (successCount === nodes.length && nodes.length > 0){
+      msg.textContent = 'key accepted. decrypting all blocks...';
+      msg.className = 'decrypt-msg success';
+      input.classList.add('success')
+      input.disabled = true;
+      document.getElementById('decryptBtn').disabled = true;
+
+      results.forEach(({ node, plainText }, i) => {
+        setTimeout(() => {
+          const hashSpan = node.querySelector('.hash-text');
+          const lockSpan = node.querySelector('.lock');
+          if (hashSpan) hashSpan.textContent = plainText;
+          if (lockSpan) lockSpan.textContent = '🔓';
+          node.classList.add('decoded');
+          const parentBlock = node.closest('.block');
+          if (parentBlock) parentBlock.classList.add('decoded');
+          const confirmedTag = parentBlock ? parentBlock.querySelector('.confirmed') : null;
+          if (confirmedTag){ confirmedTag.textContent = 'decrypted'; confirmedTag.classList.add('unlocked'); }
+        }, i * 90);
+      });
+
+      const rm = document.getElementById('roadmap');
+      if (!rm.classList.contains('open')){ unlock(); }
+    } else {
+      msg.textContent = 'incorrect key.';
+      msg.className = 'decrypt-msg error';
+      input.classList.remove('shake');
+      void input.offsetWidth; // restart animation
+      input.classList.add('shake');
+    }
+  }
+
+  document.getElementById('decryptInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') tryDecrypt();
+  });
+
+  function unlock(){
+    const rm = document.getElementById('roadmap');
+    const btn = document.getElementById('connectBtn');
+    rm.classList.add('open');
+    btn.textContent = '✅ WALLET CONNECTED';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+    btn.style.cursor = 'default';
+    setTimeout(()=>{ rm.scrollIntoView({behavior:'smooth', block:'start'}); }, 300);
+  }
+</script>
+
+</body>
+</html>
